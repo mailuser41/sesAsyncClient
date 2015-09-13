@@ -1,0 +1,14 @@
+@Bean
+    AmazonSimpleEmailService sesAsyncClient() {
+        String accessKey = propertiesParser().parseProperty("aws.credentials.accessKey", null, null);
+        String secretKey = propertiesParser().parseProperty("aws.credentials.secretKey", null, null);
+        String region = propertiesParser().parseProperty("aws.credentials.region", null, null);
+        AmazonSimpleEmailService amazonSESAsync;
+        if (StringUtils.isEmpty(accessKey) || StringUtils.isEmpty(secretKey)) {
+        	amazonSESAsync = new AmazonSimpleEmailServiceAsyncClient(new InstanceProfileCredentialsProvider());
+        } else {
+        	amazonSESAsync = new AmazonSimpleEmailServiceAsyncClient(new BasicAWSCredentials(accessKey, secretKey));
+        }
+        amazonSESAsync.setRegion(Region.getRegion(Regions.fromName(region)));
+        return amazonSESAsync;
+    }
